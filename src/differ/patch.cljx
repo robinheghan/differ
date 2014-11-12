@@ -1,3 +1,6 @@
+;; Copyright © 2014 Robin Heggelund Hansen.
+;; Distributed under the MIT License (http://opensource.org/licenses/MIT).
+
 (ns differ.patch)
 
 (defn alterations
