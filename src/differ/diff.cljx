@@ -31,7 +31,20 @@
           :else new-state)))
 
 
+(defn- map-removals [state new-state]
+  (let [new-keys (set (keys new-state))]
+    (loop [ks (keys state)
+           diff {}]
+      (if-let [k (first ks)]
+        (if (get new-keys k)
+          (recur (rest ks) diff)
+          (recur (rest ks) (assoc diff k 0)))
+        diff))))
+
 (defn removals
   "Returns a diff of removals from a to b"
   [state new-state]
-  new-state)
+  (if-not (= (type state) (type new-state))
+    (empty state)
+    (cond (map? state) (map-removals state new-state)
+          :else (empty state))))

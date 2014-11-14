@@ -51,4 +51,21 @@
 
     (testing "ignore values which are not changes or additions"
       (is (= {}
-             (diff/alterations (assoc-in state [:two :four :eight] 4) state))))))
+             (diff/alterations (assoc-in state [:two :four :eight] 4) state)))))
+
+  (deftest removals
+    (testing "empty coll when there are no changes"
+      (is (= {} (diff/removals {:a :a} {:a :a})))
+      (is (= [] (diff/removals [1 2] [1 2])))
+      (is (= #{} (diff/removals #{1 2} #{1 2})))
+      (is (= '() (diff/removals '(1 2) '(1 2)))))
+
+    (testing "if types are different, returns empty state of same type"
+      (is (= {} (diff/removals {:a 2} [:a 2])))
+      (is (= {} (diff/removals {"test" true} #{2 4})))
+      (is (= [] (diff/removals [1 5] '(1 5))))))
+
+  (deftest map-removals
+    (testing "removals"
+      (is (= {:two 0, :seven 0}
+             (diff/removals state {:one 1}))))))
