@@ -8,9 +8,12 @@
 (defn diff
   "Returns the result of diff/alterations and diff/removals in a vector"
   [state new-state]
-  state)
+  [(diff/alterations state new-state)
+   (diff/removals state new-state)])
 
 (defn patch
   "Returns the result of applying a patch made by diff to state"
   [state [alterations removals]]
-  state)
+  (-> state
+      (patch/removals removals)
+      (patch/alterations alterations)))
