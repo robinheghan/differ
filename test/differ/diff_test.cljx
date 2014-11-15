@@ -78,4 +78,4 @@
       (is (= {:two {:four {:five 0}}}
              (diff/removals state (-> state
                                       (update-in [:two :four] dissoc :five)
-                                      (update-in [:two :four] assoc :six false))))))))
+                                      (assoc-in [:two :four :six] false))))))))
