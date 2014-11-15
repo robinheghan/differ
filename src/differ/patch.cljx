@@ -7,14 +7,14 @@
 
 (defn- map-alterations [state diff]
   (loop [ks (keys diff)
-         result state]
+         result (transient state)]
     (if-let [k (first ks)]
       (let [old-val (get result k)
             diff-val (get diff k)]
         (if (and (coll? old-val) (coll? diff-val))
-          (recur (rest ks) (assoc result k (alterations old-val diff-val)))
-          (recur (rest ks) (assoc result k diff-val))))
-      result)))
+          (recur (rest ks) (assoc! result k (alterations old-val diff-val)))
+          (recur (rest ks) (assoc! result k diff-val))))
+      (persistent! result))))
 
 (defn alterations
   "Returns the result of applying alterations to state"
@@ -28,14 +28,14 @@
 
 (defn- map-removals [state diff]
   (loop [ks (keys diff)
-         result state]
+         result (transient state)]
     (if-let [k (first ks)]
       (let [old-val (get result k)
             diff-val (get diff k)]
         (if (coll? diff-val)
-          (recur (rest ks) (assoc result k (removals old-val diff-val)))
-          (recur (rest ks) (dissoc result k))))
-      result)))
+          (recur (rest ks) (assoc! result k (removals old-val diff-val)))
+          (recur (rest ks) (dissoc! result k))))
+      (persistent! result))))
 
 (defn removals
   "Returns the result of applying removals to state"
