@@ -37,14 +37,26 @@
            diff {}]
       (if-let [k (first ks)]
         (if (get new-keys k)
-          (recur (rest ks) diff)
+          (let [old-val (get state k)
+                new-val (get new-state k)
+                rms (removals old-val new-val)]
+            (if (and (coll? rms) (seq rms))
+              (recur (rest ks) (assoc diff k rms))
+              (recur (rest ks) diff)))
           (recur (rest ks) (assoc diff k 0)))
         diff))))
 
 (defn removals
   "Returns a diff of removals from a to b"
   [state new-state]
-  (if-not (= (type state) (type new-state))
-    (empty state)
-    (cond (map? state) (map-removals state new-state)
-          :else (empty state))))
+  (cond (not (and (coll? state) (coll? new-state)))
+        state
+
+        (not= (type state) (type new-state))
+        (empty state)
+
+        (map? state)
+        (map-removals state new-state)
+
+        :else
+        (empty state)))

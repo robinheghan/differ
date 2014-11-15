@@ -63,9 +63,19 @@
     (testing "if types are different, returns empty state of same type"
       (is (= {} (diff/removals {:a 2} [:a 2])))
       (is (= {} (diff/removals {"test" true} #{2 4})))
-      (is (= [] (diff/removals [1 5] '(1 5))))))
+      (is (= [] (diff/removals [1 5] '(1 5)))))
+
+    (testing "return state when values are not collections"
+      (is (= 1 (diff/removals 1 2)))
+      (is (= true (diff/removals true false)))))
 
   (deftest map-removals
     (testing "removals"
       (is (= {:two 0, :seven 0}
-             (diff/removals state {:one 1}))))))
+             (diff/removals state {:one 1}))))
+
+    (testing "works with nesting"
+      (is (= {:two {:four {:five 0}}}
+             (diff/removals state (-> state
+                                      (update-in [:two :four] dissoc :five)
+                                      (update-in [:two :four] assoc :six false))))))))
