@@ -1,7 +1,9 @@
 ;; Copyright © 2014 Robin Heggelund Hansen.
 ;; Distributed under the MIT License (http://opensource.org/licenses/MIT).
 
-(ns differ.patch)
+(ns differ.patch
+  "Use the functions in this namespace to apply diffs, created by functions
+in the differ.diff namespace, to similar datastructures.")
 
 (declare alterations removals)
 
@@ -17,7 +19,7 @@
       (persistent! result))))
 
 (defn alterations
-  "Returns the result of applying alterations to state"
+  "Returns a new datastructure, containing the changes in the provided diff."
   [state diff]
   (cond (map? diff)
         (map-alterations state diff)
@@ -38,7 +40,8 @@
       (persistent! result))))
 
 (defn removals
-  "Returns the result of applying removals to state"
+  "Returns a new datastructure, not containing the elements in the
+  provided diff."
   [state diff]
   (cond (map? diff)
         (map-removals state diff)
