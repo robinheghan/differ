@@ -1,7 +1,10 @@
 ;; Copyright © 2014 Robin Heggelund Hansen.
 ;; Distributed under the MIT License (http://opensource.org/licenses/MIT).
 
-(ns differ.diff)
+(ns differ.diff
+  "Provides functions to compare two clojure datastructures and return the
+difference between them. Alterations will return the elements that differ,
+the removals will return elements that only exist in one collection.")
 
 (declare alterations removals)
 
@@ -23,7 +26,9 @@
       (persistent! diff))))
 
 (defn alterations
-  "Returns a diff of alterations from a to b"
+  "Find elements that are different in new-state, when compared to state.
+  The datastructure returned will be of the same type as the first argument
+  passed. Works recursively on nested datastructures."
   [state new-state]
   (if-not (= (type state) (type new-state))
     new-state
@@ -47,7 +52,9 @@
         (persistent! diff)))))
 
 (defn removals
-  "Returns a diff of removals from a to b"
+  "Find elements that are in state, but not in new-state.
+  The datastructure returned will be of the same type as the first argument
+  passed. Works recursively on nested datastructures."
   [state new-state]
   (cond (not (and (coll? state) (coll? new-state)))
         state
