@@ -27,14 +27,20 @@ the removals will return elements that only exist in one collection.")
 
 (defn- vec-alterations [state new-state]
   (loop [idx 0
-         [old-val & old-rest] state
-         [new-val & new-rest] new-state
+         [old-val & old-rest :as old-coll] state
+         [new-val & new-rest :as new-coll] new-state
          diff (transient (empty new-state))]
-    (if new-val
-      (if (= old-val new-val)
-        (recur (inc idx) old-rest new-rest diff)
-        (recur (inc idx) old-rest new-rest (conj! (conj! diff idx) new-val)))
-      (persistent! diff))))
+    (cond (empty? new-coll)
+          (persistent! diff)
+
+          (empty? old-coll)
+          (recur (inc idx) old-rest new-rest (conj! (conj! diff :+) new-val))
+
+          (= old-val new-val)
+          (recur (inc idx) old-rest new-rest diff)
+
+          :else
+          (recur (inc idx) old-rest new-rest (conj! (conj! diff idx) new-val)))))
 
 (defn alterations
   "Find elements that are different in new-state, when compared to state.

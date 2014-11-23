@@ -71,13 +71,10 @@
                                          (assoc :one 5)
                                          (assoc-in [:two :four] 6))))))
 
-    #_(testing "keys can be added"
-      (is (= {:two {:four {:eight 4}}}
-             (diff/alterations state (assoc-in state [:two :four :eight] 4)))))
-
-    #_(testing "ignore values which are not changes or additions"
-      (is (= {}
-             (diff/alterations (assoc-in state [:two :four :eight] 4) state)))))
+    (testing "values can be added"
+      (is (= [:+ 1] (diff/alterations [] [1])))
+      (is (= [:+ 3 :+ 5] (diff/alterations [1] [1 3 5])))
+      (is (= [1 2 :+ 2] (diff/alterations [1 1] [1 2 2])))))
 
   (deftest removals
     (testing "empty coll when there are no changes"
