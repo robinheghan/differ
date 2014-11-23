@@ -65,18 +65,18 @@ the removals will return elements that only exist in one collection.")
 
 (defn- map-removals [state new-state]
   (let [new-keys (set (keys new-state))]
-    (loop [ks (keys state)
+    (loop [[k & ks] (keys state)
            diff (transient {})]
-      (if-let [k (first ks)]
-        (if (get new-keys k)
+      (if-not k
+        (persistent! diff)
+        (if-not (contains? new-keys k)
+          (recur ks (assoc! diff k 0))
           (let [old-val (get state k)
                 new-val (get new-state k)
                 rms (removals old-val new-val)]
             (if (and (coll? rms) (seq rms))
-              (recur (rest ks) (assoc! diff k rms))
-              (recur (rest ks) diff)))
-          (recur (rest ks) (assoc! diff k 0)))
-        (persistent! diff)))))
+              (recur ks (assoc! diff k rms))
+              (recur ks diff))))))))
 
 (defn- vec-removals [state new-state]
   (let [diff (- (count state) (count new-state))
