@@ -15,7 +15,7 @@ the removals will return elements that only exist in one collection.")
     (if-let [k (first ks)]
       (let [old-val (get state k)
             new-val (alterations old-val (get new-state k))]
-        (cond (and (map? new-val) (empty? new-val))
+        (cond (and (coll? new-val) (empty? new-val))
               (recur (rest ks) diff)
 
               (= old-val new-val)
@@ -30,10 +30,17 @@ the removals will return elements that only exist in one collection.")
   The datastructure returned will be of the same type as the first argument
   passed. Works recursively on nested datastructures."
   [state new-state]
-  (if-not (= (type state) (type new-state))
-    new-state
-    (cond (map? state) (map-alterations state new-state)
-          :else new-state)))
+  (cond (not= (type state) (type new-state))
+        new-state
+
+        (map? state)
+        (map-alterations state new-state)
+
+        (and (coll? state) (coll? new-state) (= state new-state))
+        (empty state)
+
+        :else
+        new-state))
 
 
 (defn- map-removals [state new-state]

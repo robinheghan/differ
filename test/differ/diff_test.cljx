@@ -12,14 +12,15 @@
              :two {:three 2
                    :four {:five "five"
                           :six true}}
-             :seven 3}]
+             :seven 3
+             :vector [1 2 true 4]}]
 
   (deftest alterations
     (testing "empty coll when there are no changes"
       (is (= {} (diff/alterations {:a :a} {:a :a})))
-      #_(is (= [] (diff/alterations [1 2] [1 2])))
-      #_(is (= #{} (diff/alterations #{1 2} #{1 2})))
-      #_(is (= '() (diff/alterations '(1 2) '(1 2)))))
+      (is (= [] (diff/alterations [1 2] [1 2])))
+      (is (= #{} (diff/alterations #{1 2} #{1 2})))
+      (is (= '() (diff/alterations '(1 2) '(1 2)))))
 
     (testing "if types are different, returns new-state"
       (is (= [1 2] (diff/alterations {:a 2} [1 2])))
@@ -53,6 +54,28 @@
       (is (= {}
              (diff/alterations (assoc-in state [:two :four :eight] 4) state)))))
 
+  (deftest vec-alterations
+    #_(testing "alterations"
+      (is (= []))
+      (is (= {:one 2} (diff/alterations state (assoc state :one 2))))
+      (is (= {:one 2, :seven 5} (diff/alterations state (assoc state :seven 5, :one 2)))))
+
+    #_(testing "works with nesting"
+      (is (= {:two {:four {:five 2}}}
+             (diff/alterations state (assoc-in state [:two :four :five] 2))))
+      (is (= {:one 5, :two {:four 6}}
+             (diff/alterations state (-> state
+                                         (assoc :one 5)
+                                         (assoc-in [:two :four] 6))))))
+
+    #_(testing "keys can be added"
+      (is (= {:two {:four {:eight 4}}}
+             (diff/alterations state (assoc-in state [:two :four :eight] 4)))))
+
+    #_(testing "ignore values which are not changes or additions"
+      (is (= {}
+             (diff/alterations (assoc-in state [:two :four :eight] 4) state)))))
+
   (deftest removals
     (testing "empty coll when there are no changes"
       (is (= {} (diff/removals {:a :a} {:a :a})))
@@ -71,7 +94,7 @@
 
   (deftest map-removals
     (testing "removals"
-      (is (= {:two 0, :seven 0}
+      (is (= {:two 0, :seven 0, :vector 0}
              (diff/removals state {:one 1}))))
 
     (testing "works with nesting"
