@@ -13,7 +13,7 @@ in the differ.diff namespace, to similar datastructures.")
     (if-let [k (first ks)]
       (let [old-val (get result k)
             diff-val (get diff k)]
-        (if (and (coll? old-val) (coll? diff-val))
+        (if (and (map? old-val) (map? diff-val))
           (recur (rest ks) (assoc! result k (alterations old-val diff-val)))
           (recur (rest ks) (assoc! result k diff-val))))
       (persistent! result))))
@@ -34,7 +34,7 @@ in the differ.diff namespace, to similar datastructures.")
     (if-let [k (first ks)]
       (let [old-val (get result k)
             diff-val (get diff k)]
-        (if (coll? diff-val)
+        (if (map? diff-val)
           (recur (rest ks) (assoc! result k (removals old-val diff-val)))
           (recur (rest ks) (dissoc! result k))))
       (persistent! result))))
