@@ -78,6 +78,13 @@ the removals will return elements that only exist in one collection.")
           (recur (rest ks) (assoc! diff k 0)))
         (persistent! diff)))))
 
+(defn- vec-removals [state new-state]
+  (let [diff (- (count state) (count new-state))
+        ret (empty new-state)]
+    (if (< 0 diff)
+      (conj ret diff)
+      ret)))
+
 (defn removals
   "Find elements that are in state, but not in new-state.
   The datastructure returned will be of the same type as the first argument
@@ -91,6 +98,9 @@ the removals will return elements that only exist in one collection.")
 
         (map? state)
         (map-removals state new-state)
+
+        (vector? state)
+        (vec-removals state new-state)
 
         :else
         (empty state)))

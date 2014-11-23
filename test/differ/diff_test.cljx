@@ -99,4 +99,16 @@
       (is (= {:two {:four {:five 0}}}
              (diff/removals state (-> state
                                       (update-in [:two :four] dissoc :five)
+                                      (assoc-in [:two :four :six] false)))))))
+
+  (deftest vec-removals
+    (testing "removals"
+      (is (= [] (diff/removals [1 2 3] [3 2 1])))
+      (is (= [] (diff/removals [1 2 3] [4 3 2 1])))
+      (is (= [2] (diff/removals [1 2 3] [1]))))
+
+    #_(testing "works with nesting"
+      (is (= {:two {:four {:five 0}}}
+             (diff/removals state (-> state
+                                      (update-in [:two :four] dissoc :five)
                                       (assoc-in [:two :four :six] false))))))))
