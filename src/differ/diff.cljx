@@ -25,6 +25,17 @@ the removals will return elements that only exist in one collection.")
               (recur (rest ks) (assoc! diff k new-val))))
       (persistent! diff))))
 
+(defn- vec-alterations [state new-state]
+  (loop [idx 0
+         [old-val & old-rest] state
+         [new-val & new-rest] new-state
+         diff (transient (empty new-state))]
+    (if new-val
+      (if (= old-val new-val)
+        (recur (inc idx) old-rest new-rest diff)
+        (recur (inc idx) old-rest new-rest (conj! (conj! diff idx) new-val)))
+      (persistent! diff))))
+
 (defn alterations
   "Find elements that are different in new-state, when compared to state.
   The datastructure returned will be of the same type as the first argument
@@ -35,6 +46,9 @@ the removals will return elements that only exist in one collection.")
 
         (map? state)
         (map-alterations state new-state)
+
+        (vector? state)
+        (vec-alterations state new-state)
 
         (and (coll? state) (coll? new-state) (= state new-state))
         (empty state)

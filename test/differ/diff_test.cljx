@@ -55,10 +55,13 @@
              (diff/alterations (assoc-in state [:two :four :eight] 4) state)))))
 
   (deftest vec-alterations
-    #_(testing "alterations"
-      (is (= []))
-      (is (= {:one 2} (diff/alterations state (assoc state :one 2))))
-      (is (= {:one 2, :seven 5} (diff/alterations state (assoc state :seven 5, :one 2)))))
+    (testing "alterations"
+      (is (= [2 2] (diff/alterations [1 2 3 4] [1 2 2 4])))
+      (is (= [0 5 3 1] (diff/alterations [1 2 3 4] [5 2 3 1])))
+      (is (= {:vector [0 2]}
+             (diff/alterations state (assoc-in state [:vector 0] 2))))
+      (is (= {:vector [0 5 1 3]}
+             (diff/alterations state (assoc state :vector [5 3])))))
 
     #_(testing "works with nesting"
       (is (= {:two {:four {:five 2}}}
