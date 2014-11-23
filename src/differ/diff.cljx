@@ -30,17 +30,17 @@ the removals will return elements that only exist in one collection.")
          [old-val & old-rest :as old-coll] state
          [new-val & new-rest :as new-coll] new-state
          diff (transient (empty new-state))]
-    (cond (empty? new-coll)
-          (persistent! diff)
+    (if-not (seq new-coll)
+      (persistent! diff)
+      (let [val-diff (alterations old-val new-val)]
+        (cond (empty? old-coll)
+              (recur (inc idx) old-rest new-rest (conj! (conj! diff :+) val-diff))
 
-          (empty? old-coll)
-          (recur (inc idx) old-rest new-rest (conj! (conj! diff :+) new-val))
+              (= old-val new-val)
+              (recur (inc idx) old-rest new-rest diff)
 
-          (= old-val new-val)
-          (recur (inc idx) old-rest new-rest diff)
-
-          :else
-          (recur (inc idx) old-rest new-rest (conj! (conj! diff idx) new-val)))))
+              :else
+              (recur (inc idx) old-rest new-rest (conj! (conj! diff idx) val-diff)))))))
 
 (defn alterations
   "Find elements that are different in new-state, when compared to state.

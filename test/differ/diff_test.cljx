@@ -63,13 +63,11 @@
       (is (= {:vector [0 5 1 3]}
              (diff/alterations state (assoc state :vector [5 3])))))
 
-    #_(testing "works with nesting"
-      (is (= {:two {:four {:five 2}}}
-             (diff/alterations state (assoc-in state [:two :four :five] 2))))
-      (is (= {:one 5, :two {:four 6}}
-             (diff/alterations state (-> state
-                                         (assoc :one 5)
-                                         (assoc-in [:two :four] 6))))))
+    (testing "works with nesting"
+      (is (= [1 [:+ 5]] (diff/alterations [1 []] [1 [5]])))
+      (is (= [2 {:a 5}] (diff/alterations [1 2 {:a 4, :b 10}]
+                                          [1 2 {:a 5, :b 10}])))
+      (is (= [] (diff/alterations [5 [1 2]] [5 [1 2]]))))
 
     (testing "values can be added"
       (is (= [:+ 1] (diff/alterations [] [1])))
