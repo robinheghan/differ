@@ -10,20 +10,20 @@ the removals will return elements that only exist in one collection.")
 
 
 (defn- map-alterations [state new-state]
-  (loop [ks (keys new-state)
+  (loop [[k & ks] (keys new-state)
          diff (transient {})]
-    (if-let [k (first ks)]
+    (if-not k
+      (persistent! diff)
       (let [old-val (get state k)
             new-val (alterations old-val (get new-state k))]
         (cond (and (coll? new-val) (empty? new-val))
-              (recur (rest ks) diff)
+              (recur ks diff)
 
               (= old-val new-val)
-              (recur (rest ks) diff)
+              (recur ks diff)
 
               :else
-              (recur (rest ks) (assoc! diff k new-val))))
-      (persistent! diff))))
+              (recur ks (assoc! diff k new-val)))))))
 
 (defn- vec-alterations [state new-state]
   (loop [idx 0
