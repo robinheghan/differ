@@ -80,10 +80,22 @@ the removals will return elements that only exist in one collection.")
 
 (defn- vec-removals [state new-state]
   (let [diff (- (count state) (count new-state))
-        ret (empty new-state)]
-    (if (< 0 diff)
-      (conj ret diff)
-      ret)))
+        empty-state (empty new-state)]
+    (loop [idx 0
+           [old-val & old-rest :as old-coll] state
+           [new-val & new-rest :as new-coll] new-state
+           rem (transient (conj empty-state diff))]
+      (if-not (and (seq old-coll) (seq new-coll))
+        (let [base (persistent! rem)]
+          (if (and (= 1 (count base))
+                   (>= 0 (first base)))
+            empty-state
+            base))
+        (let [new-rem (removals old-val new-val)]
+          (if (or (and (coll? new-rem) (empty? new-rem))
+                  (= old-val new-rem))
+            (recur (inc idx) old-rest new-rest rem)
+            (recur (inc idx) old-rest new-rest (conj! (conj! rem idx) new-rem))))))))
 
 (defn removals
   "Find elements that are in state, but not in new-state.
