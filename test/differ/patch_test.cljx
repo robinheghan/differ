@@ -46,4 +46,10 @@
       (is (= (-> state
                  (dissoc :one)
                  (update-in [:two] dissoc :four))
-             (patch/removals state {:one 0, :two {:four 0}}))))))
+             (patch/removals state {:one 0, :two {:four 0}}))))
+
+    (testing "vectors"
+      (is (= (assoc state :vector [1 2])
+             (patch/removals state {:vector [1]})))
+      (is (= (assoc state :vector [1 2 {:some-more [3]}])
+             (patch/removals state {:vector [0 2 {:a 0, :some-more [2]}]}))))))
