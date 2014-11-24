@@ -26,29 +26,34 @@ You can create a diff using the `differ.core/diff` function:
 ```clojure
 (def person-map {:name "Robin"
                  :age 25
-                 :sex :male})
+                 :sex :male
+                 :phone {:home 99999999
+                         :work 12121212})
 
-(def person-diff (differ/diff test-map {:name "Robin Heggelund Hansen"
-                                        :age 26})
+(def person-diff (differ/diff person-map {:name "Robin Heggelund Hansen"
+                                          :age 26
+                                          :phone {:home 45454545})
 
-;; person-diff will now be [{:name "Robin Heggelund Hansen", :age 26}
-;;                          {:sex 0}]
+;; person-diff will now be [{:name "Robin Heggelund Hansen"
+;;                           :age 26
+;;                           :phone {:home 45454545}
+;;                          {:sex 0
+;;                           :phone {:work 0}]
 ```
 
 `differ.core/diff` will return a datastructure of the same type that is given, and will work with nested datastructures. If you only want alterations, or removals, instead of both, please check the `differ.diff` and `differ.patch` namespaces.
 
-NOTE: Currently, only maps are supported.
-
 To apply the diff, you can use the `differ.core/patch` function. This function works on any similar datastructure:
 
 ```clojure
-(differ/patch {:specie :dog
+(differ/patch {:species :human
                :sex :female}
               person-diff)
 
 ;; Will return {:name "Robin Heggelund Hansen"
 ;;              :age 26
-;;              :specie :dog}
+;;              :species :human
+;;              :home {:home 45454545}}
 ```
 
 ## Contributing
