@@ -12,9 +12,16 @@
                    :four {:five "five"
                           :six true}}
              :seven 3
-             :vector [1 {:some-more [3 4 true]}]}]
+             :vector [1 2 {:a 3, :some-more [3 4 true]}]}]
 
   (deftest alterations
+    (testing "overwrite old value when types do not match, or aren't patchable"
+      (is (= 5 (patch/alterations 3 5)))
+      (is (= true (patch/alterations 1 true)))
+      (is (= {:a 1} (patch/alterations {:a {:b 2}} {:a 1})))
+      (is (= {:c 3, :a [2 3]}
+             (patch/alterations {:c 3, :a {:b 2}} {:a [2 3]}))))
+
     (testing "maps"
       (is (= (assoc state :one 2)
              (patch/alterations state {:one 2})))
@@ -23,7 +30,14 @@
                  (assoc-in [:two :three] {:booya "boom"})))
           (patch/alterations state {:seven 7, :two {:three {:booya "boom"}}}))
       (is (= (assoc state :eight [{}])
-             (patch/alterations state {:eight [{}]})))))
+             (patch/alterations state {:eight [{}]}))))
+
+    (testing "vectors"
+      (is (= [1 3 3 5 5] (patch/alterations [1 2 3 4 5] [1 3 3 5])))
+      (is (= [5] (patch/alterations [] [:+ 5])))
+      (is (= [1 2 5] (patch/alterations [2 2] [0 1 :+ 5])))
+      (is (= (assoc state :vector [2 2 {:a 3, :some-more [3 5 true]}])
+             (patch/alterations state {:vector [0 2 2 {:some-more [1 5]}]})))))
 
   (deftest removals
     (testing "maps"
