@@ -32,11 +32,10 @@ You can create a diff using the `differ.core/diff` function:
 
 (def person-diff (differ/diff person-map {:name "Robin Heggelund Hansen"
                                           :age 26
-                                          :phone {:home 45454545})
+                                          :phone {:home 99999999})
 
 ;; person-diff will now be [{:name "Robin Heggelund Hansen"
-;;                           :age 26
-;;                           :phone {:home 45454545}
+;;                           :age 26}
 ;;                          {:sex 0
 ;;                           :phone {:work 0}]
 ```
@@ -52,8 +51,7 @@ To apply the diff, you can use the `differ.core/patch` function. This function w
 
 ;; Will return {:name "Robin Heggelund Hansen"
 ;;              :age 26
-;;              :species :human
-;;              :home {:home 45454545}}
+;;              :species :human}
 ```
 
 ## Contributing
