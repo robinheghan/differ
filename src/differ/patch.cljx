@@ -8,15 +8,15 @@ in the differ.diff namespace, to similar datastructures.")
 (declare alterations removals)
 
 (defn- map-alterations [state diff]
-  (loop [ks (keys diff)
+  (loop [[k & ks] (keys diff)
          result (transient state)]
-    (if-let [k (first ks)]
+    (if-not k
+      (persistent! result)
       (let [old-val (get result k)
             diff-val (get diff k)]
         (if (and (map? old-val) (map? diff-val))
-          (recur (rest ks) (assoc! result k (alterations old-val diff-val)))
-          (recur (rest ks) (assoc! result k diff-val))))
-      (persistent! result))))
+          (recur ks (assoc! result k (alterations old-val diff-val)))
+          (recur ks (assoc! result k diff-val)))))))
 
 (defn alterations
   "Returns a new datastructure, containing the changes in the provided diff."
@@ -29,15 +29,15 @@ in the differ.diff namespace, to similar datastructures.")
 
 
 (defn- map-removals [state diff]
-  (loop [ks (keys diff)
+  (loop [[k & ks] (keys diff)
          result (transient state)]
-    (if-let [k (first ks)]
+    (if-not k
+      (persistent! result)
       (let [old-val (get result k)
             diff-val (get diff k)]
         (if (map? diff-val)
-          (recur (rest ks) (assoc! result k (removals old-val diff-val)))
-          (recur (rest ks) (dissoc! result k))))
-      (persistent! result))))
+          (recur ks (assoc! result k (removals old-val diff-val)))
+          (recur ks (dissoc! result k)))))))
 
 (defn removals
   "Returns a new datastructure, not containing the elements in the

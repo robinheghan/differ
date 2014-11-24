@@ -11,7 +11,8 @@
              :two {:three 2
                    :four {:five "five"
                           :six true}}
-             :seven 3}]
+             :seven 3
+             :vector [1 {:some-more [3 4 true]}]}]
 
   (deftest alterations
     (testing "maps"
