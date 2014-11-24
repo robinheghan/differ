@@ -12,14 +12,15 @@
              :two {:three 2
                    :four {:five "five"
                           :six true}}
-             :seven 3}]
+             :seven 3
+             :vector [1 2 true 4]}]
 
   (deftest alterations
     (testing "empty coll when there are no changes"
       (is (= {} (diff/alterations {:a :a} {:a :a})))
-      #_(is (= [] (diff/alterations [1 2] [1 2])))
-      #_(is (= #{} (diff/alterations #{1 2} #{1 2})))
-      #_(is (= '() (diff/alterations '(1 2) '(1 2)))))
+      (is (= [] (diff/alterations [1 2] [1 2])))
+      (is (= #{} (diff/alterations #{1 2} #{1 2})))
+      (is (= '() (diff/alterations '(1 2) '(1 2)))))
 
     (testing "if types are different, returns new-state"
       (is (= [1 2] (diff/alterations {:a 2} [1 2])))
@@ -53,6 +54,26 @@
       (is (= {}
              (diff/alterations (assoc-in state [:two :four :eight] 4) state)))))
 
+  (deftest vec-alterations
+    (testing "alterations"
+      (is (= [2 2] (diff/alterations [1 2 3 4] [1 2 2 4])))
+      (is (= [0 5 3 1] (diff/alterations [1 2 3 4] [5 2 3 1])))
+      (is (= {:vector [0 2]}
+             (diff/alterations state (assoc-in state [:vector 0] 2))))
+      (is (= {:vector [0 5 1 3]}
+             (diff/alterations state (assoc state :vector [5 3])))))
+
+    (testing "works with nesting"
+      (is (= [1 [:+ 5]] (diff/alterations [1 []] [1 [5]])))
+      (is (= [2 {:a 5}] (diff/alterations [1 2 {:a 4, :b 10}]
+                                          [1 2 {:a 5, :b 10}])))
+      (is (= [] (diff/alterations [5 [1 2]] [5 [1 2]]))))
+
+    (testing "values can be added"
+      (is (= [:+ 1] (diff/alterations [] [1])))
+      (is (= [:+ 3 :+ 5] (diff/alterations [1] [1 3 5])))
+      (is (= [1 2 :+ 2] (diff/alterations [1 1] [1 2 2])))))
+
   (deftest removals
     (testing "empty coll when there are no changes"
       (is (= {} (diff/removals {:a :a} {:a :a})))
@@ -71,11 +92,21 @@
 
   (deftest map-removals
     (testing "removals"
-      (is (= {:two 0, :seven 0}
+      (is (= {:two 0, :seven 0, :vector 0}
              (diff/removals state {:one 1}))))
 
     (testing "works with nesting"
       (is (= {:two {:four {:five 0}}}
              (diff/removals state (-> state
                                       (update-in [:two :four] dissoc :five)
-                                      (assoc-in [:two :four :six] false))))))))
+                                      (assoc-in [:two :four :six] false)))))))
+
+  (deftest vec-removals
+    (testing "removals"
+      (is (= [] (diff/removals [1 2 3] [3 2 1])))
+      (is (= [] (diff/removals [1 2 3] [4 3 2 1])))
+      (is (= [2] (diff/removals [1 2 3] [1]))))
+
+    (testing "works with nesting"
+      (is (= [1 1 [1]] (diff/removals [1 [3 4 5] 6] [1 [3 5]])))
+      (is (= [0 1 {:a 0}] (diff/removals [1 {:a 2} 3] [1 {} 3]))))))
