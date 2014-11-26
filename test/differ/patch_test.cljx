@@ -64,4 +64,14 @@
       (is (= (assoc state :vector [1 2])
              (patch/removals state {:vector [1]})))
       (is (= (assoc state :vector [1 2 {:some-more [3]}])
-             (patch/removals state {:vector [0 2 {:a 0, :some-more [2]}]}))))))
+             (patch/removals state {:vector [0 2 {:a 0, :some-more [2]}]}))))
+
+    (testing "lists"
+      (is (= (assoc state :list '(1 2))
+             (patch/removals state {:list '(1)})))
+      (is (= (assoc state :list '(1 2 {:some-more [3]}))
+             (patch/removals state {:list '(0 2 {:a 0, :some-more [2]})}))))
+
+    (testing "vectors and lists"
+      (is (= '(1) (patch/removals [1 2 3] '(2))))
+      (is (= [{}] (patch/removals '({:a 2} 2) [1 0 {:a 0}]))))))

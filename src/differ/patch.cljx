@@ -81,14 +81,13 @@ in the differ.diff namespace, to similar datastructures.")
   "Returns a new datastructure, not containing the elements in the
   provided diff."
   [state diff]
-  (cond (not= (type state) (type diff))
-        state
-
-        (map? diff)
+  (cond (and (map? state) (map? diff))
         (map-removals state diff)
 
-        (vector? diff)
-        (vec-removals state diff)
+        (and (sequential? state) (sequential? diff))
+        (if (vector? diff)
+          (vec-removals state diff)
+          (into (list) (reverse (vec-removals state diff))))
 
         :else
         state))
