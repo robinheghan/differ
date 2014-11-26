@@ -3,7 +3,8 @@
 
 (ns differ.patch
   "Use the functions in this namespace to apply diffs, created by functions
-in the differ.diff namespace, to similar datastructures.")
+in the differ.diff namespace, to similar datastructures."
+  (:require [clojure.set :as set]))
 
 (declare alterations removals)
 
@@ -47,6 +48,9 @@ in the differ.diff namespace, to similar datastructures.")
           (vec-alterations state diff)
           (into (list) (reverse (vec-alterations state diff))))
 
+        (and (set? state) (set? diff))
+        (set/union state diff)
+
         :else
         diff))
 
@@ -88,6 +92,9 @@ in the differ.diff namespace, to similar datastructures.")
         (if (vector? diff)
           (vec-removals state diff)
           (into (list) (reverse (vec-removals state diff))))
+
+        (and (set? state) (set? diff))
+        (set/difference state diff)
 
         :else
         state))

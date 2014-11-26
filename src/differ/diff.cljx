@@ -4,7 +4,8 @@
 (ns differ.diff
   "Provides functions to compare two clojure datastructures and return the
 difference between them. Alterations will return the elements that differ,
-the removals will return elements that only exist in one collection.")
+the removals will return elements that only exist in one collection."
+  (:require [clojure.set :as set]))
 
 (declare alterations removals)
 
@@ -55,8 +56,8 @@ the removals will return elements that only exist in one collection.")
           (vec-alterations state new-state)
           (into (list) (reverse (vec-alterations state new-state))))
 
-        (and (coll? state) (coll? new-state) (= state new-state))
-        (empty new-state)
+        (and (set? state) (set? new-state))
+        (set/difference new-state state)
 
         :else
         new-state))
@@ -111,6 +112,9 @@ the removals will return elements that only exist in one collection.")
         (if (vector? new-state)
           (vec-removals state new-state)
           (into (list) (reverse (vec-removals state new-state))))
+
+        (and (set? state) (set? new-state))
+        (set/difference state new-state)
 
         :else
         (empty state)))
