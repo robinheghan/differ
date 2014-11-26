@@ -79,7 +79,7 @@ the removals will return elements that only exist in one collection.")
 
 (defn- vec-removals [state new-state]
   (let [diff (- (count state) (count new-state))
-        empty-state (empty new-state)]
+        empty-state []]
     (loop [idx 0
            [old-val & old-rest :as old-coll] state
            [new-val & new-rest :as new-coll] new-state
@@ -104,14 +104,13 @@ the removals will return elements that only exist in one collection.")
   (cond (not (and (coll? state) (coll? new-state)))
         state
 
-        (not= (type state) (type new-state))
-        (empty state)
-
-        (map? state)
+        (and (map? state) (map? new-state))
         (map-removals state new-state)
 
-        (vector? state)
-        (vec-removals state new-state)
+        (and (sequential? state) (sequential? new-state))
+        (if (vector? new-state)
+          (vec-removals state new-state)
+          (into (list) (reverse (vec-removals state new-state))))
 
         :else
         (empty state)))

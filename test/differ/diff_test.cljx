@@ -134,4 +134,16 @@
 
     (testing "works with nesting"
       (is (= [1 1 [1]] (diff/removals [1 [3 4 5] 6] [1 [3 5]])))
-      (is (= [0 1 {:a 0}] (diff/removals [1 {:a 2} 3] [1 {} 3]))))))
+      (is (= [0 1 {:a 0}] (diff/removals [1 {:a 2} 3] [1 {} 3])))))
+
+  (deftest list-removals
+    (testing "removals"
+      (is (= '() (diff/removals '(1 2 3) '(3 2 1))))
+      (is (= '() (diff/removals '(1 2 3) '(4 3 2 1))))
+      (is (= '(2) (diff/removals '(1 2 3) '(1))))
+      (is (= '(2) (diff/removals [1 2 3] '(1)))))
+
+    (testing "works with nesting"
+      (is (= '(1 1 (1)) (diff/removals '(1 (3 4 5) 6) '(1 (3 5)))))
+      (is (= '(0 1 {:a 0}) (diff/removals '(1 {:a 2} 3) '(1 {} 3))))
+      (is (= '(0 1 {:a 0}) (diff/removals [1 {:a 2} 3] '(1 {} 3)))))))
