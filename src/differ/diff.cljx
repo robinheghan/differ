@@ -29,7 +29,7 @@ the removals will return elements that only exist in one collection.")
   (loop [idx 0
          [old-val & old-rest :as old-coll] state
          [new-val & new-rest :as new-coll] new-state
-         diff (transient (empty new-state))]
+         diff (transient [])]
     (if-not (seq new-coll)
       (persistent! diff)
       (let [val-diff (alterations old-val new-val)]
@@ -47,17 +47,16 @@ the removals will return elements that only exist in one collection.")
   The datastructure returned will be of the same type as the first argument
   passed. Works recursively on nested datastructures."
   [state new-state]
-  (cond (not= (type state) (type new-state))
-        new-state
-
-        (map? state)
+  (cond (and (map? state) (map? new-state))
         (map-alterations state new-state)
 
-        (vector? state)
-        (vec-alterations state new-state)
+        (and (sequential? state) (sequential? new-state))
+        (if (vector? new-state)
+          (vec-alterations state new-state)
+          (into (list) (reverse (vec-alterations state new-state))))
 
         (and (coll? state) (coll? new-state) (= state new-state))
-        (empty state)
+        (empty new-state)
 
         :else
         new-state))
