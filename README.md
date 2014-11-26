@@ -26,29 +26,70 @@ You can create a diff using the `differ.core/diff` function:
 ```clojure
 (def person-map {:name "Robin"
                  :age 25
-                 :sex :male})
+                 :sex :male
+                 :phone {:home 99999999
+                         :work 12121212})
 
-(def person-diff (differ/diff test-map {:name "Robin Heggelund Hansen"
-                                        :age 26})
+(def person-diff (differ/diff person-map {:name "Robin Heggelund Hansen"
+                                          :age 26
+                                          :phone {:home 99999999})
 
-;; person-diff will now be [{:name "Robin Heggelund Hansen", :age 26}
-;;                          {:sex 0}]
+;; person-diff will now be [{:name "Robin Heggelund Hansen"
+;;                           :age 26}
+;;                          {:sex 0
+;;                           :phone {:work 0}]
 ```
 
 `differ.core/diff` will return a datastructure of the same type that is given, and will work with nested datastructures. If you only want alterations, or removals, instead of both, please check the `differ.diff` and `differ.patch` namespaces.
 
-NOTE: Currently, only maps are supported.
-
 To apply the diff, you can use the `differ.core/patch` function. This function works on any similar datastructure:
 
 ```clojure
-(differ/patch {:specie :dog
+(differ/patch {:species :human
                :sex :female}
               person-diff)
 
 ;; Will return {:name "Robin Heggelund Hansen"
 ;;              :age 26
-;;              :specie :dog}
+;;              :species :human}
+```
+
+## Maps
+
+Maps are probably the best supported, and most straight forward type to diff. Alterations are a simple map of the key-value pairs missing. Removals are a map of keys where the value is 0, or a nested datastructure. Check the "Usage" section for a decent example.
+
+## Sequential types
+
+Differ works by checking what values have changed for a given key. For sequential types (vectors, lists and seqs) this means that alterations is represented as a sequential type of `[index diff]` for every key that has a changed value. This unfortunetly means that differ does not detect if elements have simply changed places.
+
+Removals are represented as a sequential type containing number of elements to drop from the end of the sequence, and `[index diff]` for every nested type that contains removals (everything else is an alteration).
+
+Differ does diff between sequential types, but remains the correct type of the new state.
+
+```clojure
+(ns test
+  (:require [differ.diff :as diff]))
+
+(diff/alterations '(1 2 3) [1 2 2 4])
+;; [2 2 :+ 4]
+
+(diff/removals [1 {:a 2} 3] '(1 {}))
+;; (1 1 {:a 0})
+```
+
+## Sets
+
+Because differ works by checking if the value for a given key has changed, sets does not support nesting (every element is it's own key). Differ can therefore only detect if elements have been added or removed from a set, and not if they have changed. If you have sets in your datastructure, you should keep them shallow to avoid a large diff.
+
+```clojure
+(ns test
+  (:require [differ.diff :as diff]))
+
+(diff/alterations #{1 2 3} #{1 2 3 4})
+;; #{4}
+
+(diff/removals #{1 {:a 2} 3} #{{} 1})
+;; #{{:a 2} 3} <-- does not pick up changes
 ```
 
 ## Contributing
