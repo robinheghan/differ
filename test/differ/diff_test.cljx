@@ -14,7 +14,8 @@
                           :six true}}
              :seven 3
              :vector [1 2 true 4]
-             :list '(4 "by" 2)}]
+             :list '(4 "by" 2)
+             :set #{:b}}]
 
   (deftest alterations
     (testing "empty coll when there are no changes"
@@ -99,6 +100,13 @@
       (is (= '(:+ 3 :+ 5) (diff/alterations '(1) '(1 3 5))))
       (is (= '(1 2 :+ 2) (diff/alterations '(1 1) '(1 2 2))))))
 
+  (deftest set-alterations
+    (testing "Values can only be added, and there is no nesting"
+      (is (= #{:a} (diff/alterations #{:c :d} #{:a :c :d})))
+      (is (= {:set #{:a}}
+             (diff/alterations state (assoc state :set #{:a :b}))))))
+
+
   (deftest removals
     (testing "empty coll when there are no changes"
       (is (= {} (diff/removals {:a :a} {:a :a})))
@@ -117,7 +125,7 @@
 
   (deftest map-removals
     (testing "removals"
-      (is (= {:two 0, :seven 0, :vector 0, :list 0}
+      (is (= {:two 0, :seven 0, :vector 0, :list 0, :set 0}
              (diff/removals state {:one 1}))))
 
     (testing "works with nesting"
@@ -146,4 +154,10 @@
     (testing "works with nesting"
       (is (= '(1 1 (1)) (diff/removals '(1 (3 4 5) 6) '(1 (3 5)))))
       (is (= '(0 1 {:a 0}) (diff/removals '(1 {:a 2} 3) '(1 {} 3))))
-      (is (= '(0 1 {:a 0}) (diff/removals [1 {:a 2} 3] '(1 {} 3)))))))
+      (is (= '(0 1 {:a 0}) (diff/removals [1 {:a 2} 3] '(1 {} 3))))))
+
+  (deftest set-removals
+    (testing "can only remove elements, does not support nesting"
+      (is (= #{true} (diff/removals #{1 true "game"} #{1 "game"})))
+      (is (= {:set #{:b}}
+             (diff/removals state (assoc state :set #{})))))))
