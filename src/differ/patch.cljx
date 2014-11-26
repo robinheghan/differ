@@ -21,7 +21,7 @@ in the differ.diff namespace, to similar datastructures.")
   (loop [idx 0
          [old-val & old-rest :as old-coll] state
          [diff-idx diff-val & diff-rest :as diff-coll] diff
-         result (transient (empty diff))]
+         result (transient [])]
     (let [old-empty? (empty? old-coll)
           diff-empty? (empty? diff-coll)]
       (cond (and old-empty? diff-empty?)
@@ -39,14 +39,13 @@ in the differ.diff namespace, to similar datastructures.")
 (defn alterations
   "Returns a new datastructure, containing the changes in the provided diff."
   [state diff]
-  (cond (not= (type state) (type diff))
-        diff
-
-        (map? diff)
+  (cond (and (map? state) (map? diff))
         (map-alterations state diff)
 
-        (vector? diff)
-        (vec-alterations state diff)
+        (and (sequential? state) (sequential? diff))
+        (if (vector? diff)
+          (vec-alterations state diff)
+          (into (list) (reverse (vec-alterations state diff))))
 
         :else
         diff))
@@ -68,7 +67,7 @@ in the differ.diff namespace, to similar datastructures.")
     (loop [index 0
            [old-val & old-rest :as old-coll] state
            [diff-index diff-val & diff-rest :as diff-coll] (rest diff)
-           result (transient (empty diff))]
+           result (transient [])]
       (cond (or (= index max-index) (empty? old-coll))
             (persistent! result)
 
@@ -82,14 +81,13 @@ in the differ.diff namespace, to similar datastructures.")
   "Returns a new datastructure, not containing the elements in the
   provided diff."
   [state diff]
-  (cond (not= (type state) (type diff))
-        state
-
-        (map? diff)
+  (cond (and (map? state) (map? diff))
         (map-removals state diff)
 
-        (vector? diff)
-        (vec-removals state diff)
+        (and (sequential? state) (sequential? diff))
+        (if (vector? diff)
+          (vec-removals state diff)
+          (into (list) (reverse (vec-removals state diff))))
 
         :else
         state))

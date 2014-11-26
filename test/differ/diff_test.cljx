@@ -13,7 +13,8 @@
                    :four {:five "five"
                           :six true}}
              :seven 3
-             :vector [1 2 true 4]}]
+             :vector [1 2 true 4]
+             :list '(4 "by" 2)}]
 
   (deftest alterations
     (testing "empty coll when there are no changes"
@@ -25,12 +26,16 @@
     (testing "if types are different, returns new-state"
       (is (= [1 2] (diff/alterations {:a 2} [1 2])))
       (is (= #{2 4} (diff/alterations {"test" true} #{2 4})))
-      (is (= '(1 5) (diff/alterations [1 5] '(1 5))))
       (is (= 1 (diff/alterations [1 2 3] 1))))
+
+    (testing "sequential types are treated equal"
+      (is (= '(1 2) (diff/alterations [1 1 1] '(1 2 1))))
+      (is (= [1 2] (diff/alterations '(1 1 1) [1 2 1]))))
 
     (testing "returns new-state if values are not equal, but not diffable"
       (is (= 2 (diff/alterations 1 2)))
-      (is (= true (diff/alterations false true)))))
+      (is (= true (diff/alterations false true)))
+      (is (= "first" (diff/alterations "who's on" "first")))))
 
 
   (deftest map-alterations
@@ -74,6 +79,26 @@
       (is (= [:+ 3 :+ 5] (diff/alterations [1] [1 3 5])))
       (is (= [1 2 :+ 2] (diff/alterations [1 1] [1 2 2])))))
 
+  (deftest list-alterations
+    (testing "alterations"
+      (is (= '(2 2) (diff/alterations '(1 2 3 4) '(1 2 2 4))))
+      (is (= '(0 5 3 1) (diff/alterations '(1 2 3 4) '(5 2 3 1))))
+      (is (= {:list '(1 "x")}
+             (diff/alterations state (assoc state :list '(4 "x" 2)))))
+      (is (= {:list '(0 3 2 4)}
+             (diff/alterations state (assoc state :list '(3 "by" 4))))))
+
+    (testing "works with nesting"
+      (is (= '(1 [:+ 5]) (diff/alterations '(1 []) '(1 [5]))))
+      (is (= '(2 {:a 5}) (diff/alterations '(1 2 {:a 4, :b 10})
+                                           '(1 2 {:a 5, :b 10}))))
+      (is (= '() (diff/alterations '(5 [1 2]) '(5 [1 2])))))
+
+    (testing "values can be added"
+      (is (= '(:+ 1) (diff/alterations '() '(1))))
+      (is (= '(:+ 3 :+ 5) (diff/alterations '(1) '(1 3 5))))
+      (is (= '(1 2 :+ 2) (diff/alterations '(1 1) '(1 2 2))))))
+
   (deftest removals
     (testing "empty coll when there are no changes"
       (is (= {} (diff/removals {:a :a} {:a :a})))
@@ -92,7 +117,7 @@
 
   (deftest map-removals
     (testing "removals"
-      (is (= {:two 0, :seven 0, :vector 0}
+      (is (= {:two 0, :seven 0, :vector 0, :list 0}
              (diff/removals state {:one 1}))))
 
     (testing "works with nesting"
@@ -109,4 +134,16 @@
 
     (testing "works with nesting"
       (is (= [1 1 [1]] (diff/removals [1 [3 4 5] 6] [1 [3 5]])))
-      (is (= [0 1 {:a 0}] (diff/removals [1 {:a 2} 3] [1 {} 3]))))))
+      (is (= [0 1 {:a 0}] (diff/removals [1 {:a 2} 3] [1 {} 3])))))
+
+  (deftest list-removals
+    (testing "removals"
+      (is (= '() (diff/removals '(1 2 3) '(3 2 1))))
+      (is (= '() (diff/removals '(1 2 3) '(4 3 2 1))))
+      (is (= '(2) (diff/removals '(1 2 3) '(1))))
+      (is (= '(2) (diff/removals [1 2 3] '(1)))))
+
+    (testing "works with nesting"
+      (is (= '(1 1 (1)) (diff/removals '(1 (3 4 5) 6) '(1 (3 5)))))
+      (is (= '(0 1 {:a 0}) (diff/removals '(1 {:a 2} 3) '(1 {} 3))))
+      (is (= '(0 1 {:a 0}) (diff/removals [1 {:a 2} 3] '(1 {} 3)))))))
