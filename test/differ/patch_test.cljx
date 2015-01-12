@@ -29,8 +29,8 @@
              (patch/alterations state {:one 2})))
       (is (= (-> state
                  (assoc :seven 7)
-                 (assoc-in [:two :three] {:booya "boom"})))
-          (patch/alterations state {:seven 7, :two {:three {:booya "boom"}}}))
+                 (assoc-in [:two :three] {:booya "boom"}))
+             (patch/alterations state {:seven 7, :two {:three {:booya "boom"}}})))
       (is (= (assoc state :eight [{}])
              (patch/alterations state {:eight [{}]}))))
 
