@@ -37,4 +37,5 @@
                     :hooks [leiningen.cljsbuild]}}
 
   :aliases {"all-tests" ["with-profile" "cljs:1.6:1.7" "test"]
-            "cljx-once" ["with-profile" "cljx" "cljx" "once"]})
+            "cljx-once" ["with-profile" "cljx" "cljx" "once"]
+            "cljx-auto" ["with-profile" "cljx" "cljx" "auto"]})
