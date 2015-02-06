@@ -17,10 +17,10 @@ the removals will return elements that only exist in one collection."
       (persistent! diff)
       (let [old-val (get state k)
             new-val (alterations old-val (get new-state k))]
-        (cond (and (coll? new-val) (empty? new-val))
+        (cond (and (coll? new-val) (empty? new-val) (not (nil? old-val)))
               (recur ks diff)
 
-              (= old-val new-val)
+              (and (= old-val new-val) (not (nil? old-val)))
               (recur ks diff)
 
               :else

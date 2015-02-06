@@ -23,19 +23,30 @@
                                    :nil-map nil
                                    :empty-map {}
                                    :nil-emptyMap nil
-                                   :nil-disappear nil}
+                                   :nil-none nil}
                              :mapUnchange {:a "ss"}}
-                 :modifyList {:list-nil [1 {:a "ddd"} "ss"]
-                              :listEmpty-nil []
-                              :list-empty [1 {:a "ddd"} "ss"]
-                              :nil-emptyList nil
-                              :nil-list nil
-                              :empty-list []
-                              :listModify [1 2 3 4
-                                           {:a "tt"}
-                                           {:numberUnchange 3
-                                            :numberModify 3
-                                            :f "s"}]}}
+                 :modifyVector {:vector-nil [1 {:a "ddd"} "ss"]
+                                :vectorEmpty-nil []
+                                :vector-empty [1 {:a "ddd"} "ss"]
+                                :nil-emptyvector nil
+                                :nil-vector nil
+                                :empty-vector []
+                                :vectorModify [1 2 3 4
+                                             {:a "tt"}
+                                             {:numberUnchange 3
+                                              :numberModify 3
+                                              :f "s"}]}
+                 :modifySet {:set-nil #{1 {:a "ddd"} "ss"}
+                             :setEmpty-nil #{}
+                             :set-empty #{1 {:a "ddd"} "ss"}
+                             :nil-emptyset nil
+                             :nil-set nil
+                             :empty-set #{}
+                             :setModify #{1 2 3 4
+                                          {:a "tt"}
+                                          {:numberUnchange 3
+                                           :numberModify 3
+                                           :f "s"}}}}
 
       new-state {:modifyMap {:stringModify "ttt"
                              :numberModify 342
@@ -53,19 +64,29 @@
                                    :nil-map {:a 1}
                                    :empty-map {:a 2}
                                    :nil-emptyMap {}
-                                   :disappear-nil nil}
+                                   :none-nil nil}
                              :mapUnchange {:a "ss"}}
-                 :modifyList {:list-nil nil
-                              :listEmpty-nil nil
-                              :list-empty []
-                              :nil-emptyList []
-                              :nil-list [1 {:a "ddd"} "ss"]
-                              :empty-list [1 {:a "ddd"} "ss"]
-                              :listModify [1 4 3 5 6
-                                           {:numberUnchange 3
-                                            :numberModify 4
-                                            :a "ss"}
-                                            4]}}
+                 :modifyVector {:vector-nil nil
+                                :vectorEmpty-nil nil
+                                :vector-empty []
+                                :nil-emptyvector []
+                                :nil-vector [1 {:a "ddd"} "ss"]
+                                :empty-vector [1 {:a "ddd"} "ss"]
+                                :vectorModify [1 4 3 5 6
+                                              {:numberUnchange 3
+                                               :numberModify 4
+                                               :a "ss"}
+                                               4]}
+                 :modifySet {:set-nil nil
+                             :setEmpty-nil nil
+                             :set-empty #{}
+                             :nil-emptyset #{}
+                             :nil-set #{1 {:a "ddd"} "ss"}
+                             :empty-set #{3 "dd"}
+                             :setModify #{1 4 3 5 6
+                                          {:numberUnchange 3
+                                           :numberModify 4
+                                           :a "ss"}}}}
 
       diff-state (core/diff old-state new-state)
 
