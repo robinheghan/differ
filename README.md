@@ -108,6 +108,6 @@ There is a leiningen alias that makes it easy to run the tests against supported
 
 ## License
 
-Copyright © 2014 Robin Heggelund Hansen.
+Copyright © 2014-2016 Robin Heggelund Hansen.
 
 Distributed under the [MIT License](http://opensource.org/licenses/MIT).
