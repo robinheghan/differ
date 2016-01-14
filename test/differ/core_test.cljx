@@ -11,7 +11,7 @@
                              :numberModify 34
                              :map {:numberModify 3
                                    :stringModify "ss"
-                                   :deepMap{:a 3}
+                                   :deepMap {:a 3}
                                    :numberAdd 4
                                    :number-nil 3
                                    :nil-number nil
@@ -32,10 +32,10 @@
                                 :nil-vector nil
                                 :empty-vector []
                                 :vectorModify [1 2 3 4
-                                             {:a "tt"}
-                                             {:numberUnchange 3
-                                              :numberModify 3
-                                              :f "s"}]}
+                                               {:a "tt"}
+                                               {:numberUnchange 3
+                                                :numberModify 3
+                                                :f "s"}]}
                  :modifySet {:set-nil #{1 {:a "ddd"} "ss"}
                              :setEmpty-nil #{}
                              :set-empty #{1 {:a "ddd"} "ss"}

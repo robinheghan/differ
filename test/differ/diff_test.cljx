@@ -58,7 +58,15 @@
 
     (testing "ignore values which are not changes or additions"
       (is (= {}
-             (diff/alterations (assoc-in state [:two :four :eight] 4) state)))))
+             (diff/alterations (assoc-in state [:two :four :eight] 4) state))))
+
+    (testing "nil has no special treatment"
+      (is (= {:a 2, :b "x", :d nil, :e 2}
+             (diff/alterations {:a 1 :b 2 :c nil :d 1 :e nil}
+                               {:a 2 :b "x" :c nil :d nil :e 2})))
+      (is (= {:a 2 :b []}
+             (diff/alterations {:a 1 :b nil}
+                               {:a 2 :b []})))))
 
   (deftest vec-alterations
     (testing "alterations"
