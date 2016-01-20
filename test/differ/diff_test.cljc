@@ -3,9 +3,8 @@
 
 (ns differ.diff-test
   (:require [differ.diff :as diff]
-            #+clj [clojure.test :refer [is deftest testing]]
-            #+cljs [cemerick.cljs.test :as t])
-  #+cljs (:require-macros [cemerick.cljs.test :refer [is deftest testing]]))
+            #?(:clj [clojure.test :refer [is deftest testing]]
+               :cljs [cljs.test :refer-macros [is deftest testing]])))
 
 
 (let [state {:one 1

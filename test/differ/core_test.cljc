@@ -3,9 +3,8 @@
 
 (ns differ.core-test
   (:require [differ.core :as core]
-            #+clj [clojure.test :refer [is deftest testing]]
-            #+cljs [cemerick.cljs.test :as t])
-  #+cljs (:require-macros [cemerick.cljs.test :refer [is deftest testing]]))
+            #?(:clj [clojure.test :refer [is deftest testing]]
+               :cljs [cljs.test :refer-macros [is deftest testing]])))
 
 (let [old-state {:modifyMap {:stringModify "tt"
                              :numberModify 34
