@@ -107,4 +107,15 @@
   (deftest patch
     (is (= new-simple-state (core/patch old-simple-state [alter remo])))
     (is (= new-state (core/patch old-state diff-state)))
-    (is (= [1 2 3 4] (core/patch [1 2 3] [[:+ 4] []])))))
+    (is (= [1 2 3 4] (core/patch [1 2 3] [[:+ 4] []]))))
+
+  (deftest metadata
+    (let [map-meta {:type :differ/map}
+          vec-meta {:type :differ/vec}
+          map-test (with-meta {:name "Robin"
+                               :hobbies [:soccer]}
+                     map-meta)
+          vec-test (with-meta [1 2 3] vec-meta)]
+
+      (is (= map-meta (meta (core/patch map-test [{:name "Nibor"} {:hobby 0}]))))
+      (is (= vec-meta (meta (core/patch vec-test [[] [1]])))))))

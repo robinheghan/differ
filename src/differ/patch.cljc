@@ -13,7 +13,7 @@ in the differ.diff namespace, to similar datastructures."
   (loop [[k & ks] (keys diff)
          result (transient state)]
     (if-not k
-      (persistent! result)
+      (with-meta (persistent! result) (meta state))
       (let [old-val (get result k)
             diff-val (get diff k)]
         (recur ks (assoc! result k (alterations old-val diff-val)))))))
@@ -26,7 +26,7 @@ in the differ.diff namespace, to similar datastructures."
     (let [old-empty? (empty? old-coll)
           diff-empty? (empty? diff-coll)]
       (cond (and old-empty? diff-empty?)
-            (persistent! result)
+            (with-meta (persistent! result) (meta state))
 
             diff-empty?
             (recur (inc idx) old-rest diff-rest (conj! result old-val))
@@ -46,10 +46,14 @@ in the differ.diff namespace, to similar datastructures."
         (and (sequential? state) (sequential? diff))
         (if (vector? diff)
           (vec-alterations state diff)
-          (into (list) (reverse (vec-alterations state diff))))
+          (with-meta
+            (into (list) (reverse (vec-alterations state diff)))
+            (meta state)))
 
         (and (set? state) (set? diff))
-        (set/union state diff)
+        (with-meta
+          (set/union state diff)
+          (meta state))
 
         :else
         diff))
@@ -59,7 +63,7 @@ in the differ.diff namespace, to similar datastructures."
   (loop [[k & ks] (keys diff)
          result (transient state)]
     (if-not k
-      (persistent! result)
+      (with-meta (persistent! result) (meta state))
       (let [old-val (get result k)
             diff-val (get diff k)]
         (if (= 0 diff-val)
@@ -75,7 +79,7 @@ in the differ.diff namespace, to similar datastructures."
              [diff-index diff-val & diff-rest :as diff-coll] (rest diff)
              result (transient [])]
         (cond (or (= index max-index) (empty? old-coll))
-              (persistent! result)
+              (with-meta (persistent! result) (meta state))
 
               (= index diff-index)
               (recur (inc index) old-rest diff-rest (conj! result (removals old-val diff-val)))
@@ -93,10 +97,14 @@ in the differ.diff namespace, to similar datastructures."
         (and (sequential? state) (sequential? diff))
         (if (vector? diff)
           (vec-removals state diff)
-          (into (list) (reverse (vec-removals state diff))))
+          (with-meta
+            (into (list) (reverse (vec-removals state diff)))
+            (meta state)))
 
         (and (set? state) (set? diff))
-        (set/difference state diff)
+        (with-meta
+          (set/difference state diff)
+          (meta state))
 
         :else
         state))
