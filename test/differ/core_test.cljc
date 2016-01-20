@@ -101,8 +101,10 @@
       remo {:two {:three 0}}]
 
   (deftest diff
-    (is (= [alter remo] (core/diff old-simple-state new-simple-state))))
+    (is (= [alter remo] (core/diff old-simple-state new-simple-state)))
+    (is (= [[:+ 4] []] (core/diff [1 2 3] [1 2 3 4]))))
 
   (deftest patch
     (is (= new-simple-state (core/patch old-simple-state [alter remo])))
-    (is (= new-state (core/patch old-state diff-state)))))
+    (is (= new-state (core/patch old-state diff-state)))
+    (is (= [1 2 3 4] (core/patch [1 2 3] [[:+ 4] []])))))

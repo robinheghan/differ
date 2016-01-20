@@ -67,19 +67,21 @@ in the differ.diff namespace, to similar datastructures."
           (recur ks (assoc! result k (removals old-val diff-val))))))))
 
 (defn- vec-removals [state diff]
-  (let [max-index (- (count state) (first diff))]
-    (loop [index 0
-           [old-val & old-rest :as old-coll] state
-           [diff-index diff-val & diff-rest :as diff-coll] (rest diff)
-           result (transient [])]
-      (cond (or (= index max-index) (empty? old-coll))
-            (persistent! result)
+  (if-not (seq diff)
+    state
+    (let [max-index (- (count state) (first diff))]
+      (loop [index 0
+             [old-val & old-rest :as old-coll] state
+             [diff-index diff-val & diff-rest :as diff-coll] (rest diff)
+             result (transient [])]
+        (cond (or (= index max-index) (empty? old-coll))
+              (persistent! result)
 
-            (= index diff-index)
-            (recur (inc index) old-rest diff-rest (conj! result (removals old-val diff-val)))
+              (= index diff-index)
+              (recur (inc index) old-rest diff-rest (conj! result (removals old-val diff-val)))
 
-            :else
-            (recur (inc index) old-rest diff-coll (conj! result old-val))))))
+              :else
+              (recur (inc index) old-rest diff-coll (conj! result old-val)))))))
 
 (defn removals
   "Returns a new datastructure, not containing the elements in the
