@@ -1,4 +1,4 @@
-# Differ [![Travis CI status](https://api.travis-ci.org/Skinney/differ.png)](http://travis-ci.org/#!/Skinney/differ/builds)
+# Differ
 
 A library for diffing, and patching, Clojure(script) datastructures.
 
