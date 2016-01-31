@@ -1,6 +1,6 @@
 (defproject differ "0.3.0"
   :description "A library for diffing, and patching, Clojure(script) data structures"
-  :url "http://github.com/Skinney/differ"
+  :url "https://gitlab.com/robin.heggelund/emacs-config"
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/MIT"}
 
