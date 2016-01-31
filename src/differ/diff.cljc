@@ -1,4 +1,4 @@
-;; Copyright © 2014 Robin Heggelund Hansen.
+;; Copyright © 2014-2016 Robin Heggelund Hansen.
 ;; Distributed under the MIT License (http://opensource.org/licenses/MIT).
 
 (ns differ.diff
@@ -15,12 +15,12 @@ the removals will return elements that only exist in one collection."
          diff (transient {})]
     (if-not k
       (persistent! diff)
-      (let [old-val (get state k)
+      (let [old-val (get state k ::none)
             new-val (alterations old-val (get new-state k))]
-        (cond (and (coll? new-val) (empty? new-val) (not (nil? old-val)))
+        (cond (and (coll? old-val) (coll? new-val) (empty? new-val))
               (recur ks diff)
 
-              (and (= old-val new-val) (not (nil? old-val)))
+              (= old-val new-val)
               (recur ks diff)
 
               :else

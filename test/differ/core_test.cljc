@@ -1,17 +1,16 @@
-;; Copyright © 2014 Robin Heggelund Hansen.
+;; Copyright © 2014-2016 Robin Heggelund Hansen.
 ;; Distributed under the MIT License (http://opensource.org/licenses/MIT).
 
 (ns differ.core-test
   (:require [differ.core :as core]
-            #+clj [clojure.test :refer [is deftest testing]]
-            #+cljs [cemerick.cljs.test :as t])
-  #+cljs (:require-macros [cemerick.cljs.test :refer [is deftest testing]]))
+            #?(:clj [clojure.test :refer [is deftest testing]]
+               :cljs [cljs.test :refer-macros [is deftest testing]])))
 
 (let [old-state {:modifyMap {:stringModify "tt"
                              :numberModify 34
                              :map {:numberModify 3
                                    :stringModify "ss"
-                                   :deepMap{:a 3}
+                                   :deepMap {:a 3}
                                    :numberAdd 4
                                    :number-nil 3
                                    :nil-number nil
@@ -32,10 +31,10 @@
                                 :nil-vector nil
                                 :empty-vector []
                                 :vectorModify [1 2 3 4
-                                             {:a "tt"}
-                                             {:numberUnchange 3
-                                              :numberModify 3
-                                              :f "s"}]}
+                                               {:a "tt"}
+                                               {:numberUnchange 3
+                                                :numberModify 3
+                                                :f "s"}]}
                  :modifySet {:set-nil #{1 {:a "ddd"} "ss"}
                              :setEmpty-nil #{}
                              :set-empty #{1 {:a "ddd"} "ss"}
@@ -102,8 +101,21 @@
       remo {:two {:three 0}}]
 
   (deftest diff
-    (is (= [alter remo] (core/diff old-simple-state new-simple-state))))
+    (is (= [alter remo] (core/diff old-simple-state new-simple-state)))
+    (is (= [[:+ 4] []] (core/diff [1 2 3] [1 2 3 4]))))
 
   (deftest patch
     (is (= new-simple-state (core/patch old-simple-state [alter remo])))
-    (is (= new-state (core/patch old-state diff-state)))))
+    (is (= new-state (core/patch old-state diff-state)))
+    (is (= [1 2 3 4] (core/patch [1 2 3] [[:+ 4] []]))))
+
+  (deftest metadata
+    (let [map-meta {:type :differ/map}
+          vec-meta {:type :differ/vec}
+          map-test (with-meta {:name "Robin"
+                               :hobbies [:soccer]}
+                     map-meta)
+          vec-test (with-meta [1 2 3] vec-meta)]
+
+      (is (= map-meta (meta (core/patch map-test [{:name "Nibor"} {:hobby 0}]))))
+      (is (= vec-meta (meta (core/patch vec-test [[] [1]])))))))

@@ -98,7 +98,7 @@ Feedback to both this library and this guide is welcome. Plese read `CONTRIBUTIN
 
 ### Running the tests
 
-Differ is assumed to work with Clojure 1.6 and up, as well as Clojurescript 2371 and up.
+Differ is assumed to work with Clojure 1.7 and up, as well as Clojurescript 1.7.228 and up.
 
 There is a leiningen alias that makes it easy to run the tests against supported Clojure versions:
 
@@ -108,6 +108,6 @@ There is a leiningen alias that makes it easy to run the tests against supported
 
 ## License
 
-Copyright © 2014 Robin Heggelund Hansen.
+Copyright © 2014-2016 Robin Heggelund Hansen.
 
 Distributed under the [MIT License](http://opensource.org/licenses/MIT).

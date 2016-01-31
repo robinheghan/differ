@@ -1,41 +1,19 @@
-(defproject differ "0.2.1"
+(defproject differ "0.3.0"
   :description "A library for diffing, and patching, Clojure(script) data structures"
-  :url "http://github.com/Skinney/differ"
+  :url "https://gitlab.com/robin.heggelund/emacs-config"
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/MIT"}
 
-  :dependencies [[org.clojure/clojure "1.6.0"]]
+  :dependencies [[org.clojure/clojure "1.7.0"]]
 
-  :source-paths ["src" "target/classes"]
-  :test-paths ["target/test-classes"]
-  :jar-exclusions [#"\.cljx"]
-  :prep-tasks [["cljx-once"]]
-
-  :profiles {:cljx {:plugins [[com.keminglabs/cljx "0.4.0"]]
-                    :cljx {:builds [{:source-paths ["src"]
-                                     :output-path "target/classes"
-                                     :rules :clj}
-                                    {:source-paths ["src"]
-                                     :output-path "target/classes"
-                                     :rules :cljs}
-                                    {:source-paths ["test"]
-                                     :output-path "target/test-classes"
-                                     :rules :clj}
-                                    {:source-paths ["test"]
-                                     :output-path "target/test-classes"
-                                     :rules :cljs}]}}
-             :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
-             :1.7 {:dependencies [[org.clojure/clojure "1.7.0-alpha5"]]}
-             :cljs {:dependencies [[org.clojure/clojurescript "0.0-2665"]]
-                    :plugins [[lein-cljsbuild "1.0.3"]
-                              [com.cemerick/clojurescript.test "0.3.3"]]
+  :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
+             :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
+             :cljs {:dependencies [[org.clojure/clojurescript "1.7.228"]]
+                    :plugins [[lein-cljsbuild "1.1.2"]]
                     :cljsbuild {:test-commands {"phantom" ["phantomjs" :runner "target/testable.js"]}
-                                :builds [{:source-paths ["target/classes" "target/test-classes"]
-                                         :compiler {:output-to "target/testable.js"
-                                                    :optimizations :whitespace}}]}
-                    :prep-tasks [["cljsbuild" "once"]]
-                    :hooks [leiningen.cljsbuild]}}
+                                :builds [{:source-paths ["src" "test"]
+                                          :compiler {:output-to "target/testable.js"
+                                                     :optimizations :none}}]}
+                    :prep-tasks [["cljsbuild" "once"]]}}
 
-  :aliases {"all-tests" ["with-profile" "cljs:1.6:1.7" "test"]
-            "cljx-once" ["with-profile" "cljx" "cljx" "once"]
-            "cljx-auto" ["with-profile" "cljx" "cljx" "auto"]})
+  :aliases {"all-tests" ["with-profile" "cljs:1.7:1.8" "test"]})
