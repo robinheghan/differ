@@ -1,7 +1,7 @@
 (defproject differ "0.3.0"
   :description "A library for diffing, and patching, Clojure(script) data structures"
-  :url "https://gitlab.com/robin.heggelund/emacs-config"
-  :license {:name "MIT License"
+  :url "https://gitlab.com/robin.heggelund/differ"
+  :license {:name "MIT"
             :url "http://opensource.org/licenses/MIT"}
 
   :dependencies [[org.clojure/clojure "1.7.0"]]
