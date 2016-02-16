@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+Only a change in meta data (project moved from github to gitlab).
+
 ## 0.3
 
 This release bumps the required version of Clojure and Clojurescript to 1.7.x.
