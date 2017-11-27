@@ -1,10 +1,10 @@
-;; Copyright © 2014-2016 Robin Heggelund Hansen.
+;; Copyright © 2014-2017 Robin Heggelund Hansen.
 ;; Distributed under the MIT License (http://opensource.org/licenses/MIT).
 
 (ns differ.diff
   "Provides functions to compare two clojure datastructures and return the
-difference between them. Alterations will return the elements that differ,
-the removals will return elements that only exist in one collection."
+  difference between them. Alterations will return the elements that differ,
+  the removals will return elements that only exist in one collection."
   (:require [clojure.set :as set]))
 
 (declare alterations removals)

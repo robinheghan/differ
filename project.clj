@@ -1,10 +1,10 @@
-(defproject differ "0.3.1"
+(defproject differ "0.3.2"
   :description "A library for diffing, and patching, Clojure(script) data structures"
-  :url "https://gitlab.com/robin.heggelund/differ"
+  :url "https://github.com/Skinney/differ"
   :license {:name "MIT"
             :url "http://opensource.org/licenses/MIT"}
 
-  :dependencies [[org.clojure/clojure "1.7.0"]]
+  :dependencies [[org.clojure/clojure "1.7.0" :scope "provided"]]
 
   :profiles {:1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
              :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}

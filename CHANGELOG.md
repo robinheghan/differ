@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+Change in metadata
+
 ## 0.3.1
 
 Only a change in meta data (project moved from github to gitlab).

@@ -1,9 +1,9 @@
-;; Copyright © 2014-2016 Robin Heggelund Hansen.
+;; Copyright © 2014-2017 Robin Heggelund Hansen.
 ;; Distributed under the MIT License (http://opensource.org/licenses/MIT).
 
 (ns differ.patch
   "Use the functions in this namespace to apply diffs, created by functions
-in the differ.diff namespace, to similar datastructures."
+  in the differ.diff namespace, to similar datastructures."
   (:require [clojure.set :as set]))
 
 (declare alterations removals)
