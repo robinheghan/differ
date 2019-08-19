@@ -118,4 +118,10 @@
           vec-test (with-meta [1 2 3] vec-meta)]
 
       (is (= map-meta (meta (core/patch map-test [{:name "Nibor"} {:hobby 0}]))))
-      (is (= vec-meta (meta (core/patch vec-test [[] [1]])))))))
+      (is (= vec-meta (meta (core/patch vec-test [[] [1]]))))))
+
+  (deftest vector-nil-replacement
+    (let [vector-diff-old {:words ["blah"]}
+          vector-diff-new {:words nil}
+          vector-diff (core/diff vector-diff-old vector-diff-new)]
+      (is (= vector-diff-new (core/patch vector-diff-old vector-diff))))))

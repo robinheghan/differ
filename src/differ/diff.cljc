@@ -102,7 +102,10 @@
   The datastructure returned will be of the same type as the first argument
   passed. Works recursively on nested datastructures."
   [state new-state]
-  (cond (not (and (coll? state) (coll? new-state)))
+  (cond (and (coll? state) (nil? new-state))
+        nil
+
+        (not (and (coll? state) (coll? new-state)))
         state
 
         (and (map? state) (map? new-state))
