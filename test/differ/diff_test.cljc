@@ -1,4 +1,4 @@
-;; Copyright © 2014-2017 Robin Heggelund Hansen.
+;; Copyright © 2014-2019 Robin Heggelund Hansen.
 ;; Distributed under the MIT License (http://opensource.org/licenses/MIT).
 
 (ns differ.diff-test

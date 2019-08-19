@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.3
+
+- Update dependencies and build targets
+- Fix runtime crash where old value was vector and new value was nil
+
 ## 0.3.2
 
 Change in metadata
