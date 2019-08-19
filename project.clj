@@ -4,6 +4,8 @@
   :license {:name "MIT"
             :url "http://opensource.org/licenses/MIT"}
 
+  :signing {:gpg-key "robin.heggelund@icloud.com"}
+
   :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]]
 
   :profiles {:1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
