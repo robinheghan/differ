@@ -26,7 +26,7 @@ You can create a diff using the `differ.core/diff` function:
 ```clojure
 (def person-map {:name "Robin"
                  :age 25
-                 :sex :male
+                 :gender :male
                  :phone {:home 99999999
                          :work 12121212})
 
@@ -36,17 +36,17 @@ You can create a diff using the `differ.core/diff` function:
 
 ;; person-diff will now be [{:name "Robin Heggelund Hansen"
 ;;                           :age 26}
-;;                          {:sex 0
+;;                          {:gender 0
 ;;                           :phone {:work 0}]
 ```
 
-`differ.core/diff` will return a datastructure of the same type that is given, and will work with nested datastructures. If you only want alterations, or removals, instead of both, please check the `differ.diff` and `differ.patch` namespaces.
+`differ.core/diff` will return a data structure of the same type that is given, and will work with nested data structures. If you only want alterations, or removals, instead of both, please check the `differ.diff` and `differ.patch` namespaces.
 
-To apply the diff, you can use the `differ.core/patch` function. This function works on any similar datastructure:
+To apply the diff, you can use the `differ.core/patch` function. This function works on any similar data structure:
 
 ```clojure
 (differ/patch {:species :human
-               :sex :female}
+               :gender :female}
               person-diff)
 
 ;; Will return {:name "Robin Heggelund Hansen"
@@ -56,7 +56,7 @@ To apply the diff, you can use the `differ.core/patch` function. This function w
 
 ## Maps
 
-Maps are probably the best supported, and most straight forward type to diff. Alterations are a simple map of the key-value pairs missing. Removals are a map of keys where the value is 0, or a nested datastructure. Check the "Usage" section for a decent example.
+Maps are probably the best supported, and most straight forward type to diff. Alterations are a simple map of the key-value pairs missing. Removals are a map of keys where the value is 0, or a nested data structure. Check the "Usage" section for a decent example.
 
 ## Sequential types
 
@@ -98,16 +98,16 @@ Feedback to both this library and this guide is welcome. Plese read `CONTRIBUTIN
 
 ### Running the tests
 
-Differ is assumed to work with Clojure 1.7 and up, as well as Clojurescript 1.7.228 and up.
+Differ is assumed to work with Clojure 1.8 and up, as well as a recent Clojurescript version.
 
 There is a leiningen alias that makes it easy to run the tests against supported Clojure versions:
 
 ```bash
-λ lein all-tests
+> lein all-tests
 ```
 
 ## License
 
-Copyright © 2014-2016 Robin Heggelund Hansen.
+Copyright © 2014-2019 Robin Heggelund Hansen.
 
 Distributed under the [MIT License](http://opensource.org/licenses/MIT).
