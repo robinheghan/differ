@@ -97,7 +97,7 @@
             base))
         (let [new-rem (removals old-val new-val)]
           (if (or (and (coll? new-rem) (empty? new-rem))
-                  (= old-val new-rem))
+                  (and (= old-val new-rem) (not (or (sequential? old-val) (map? old-val) (set? old-val)))))
             (recur (inc idx) old-rest new-rest rem)
             (recur (inc idx) old-rest new-rest (conj! (conj! rem idx) new-rem))))))))
 

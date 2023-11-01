@@ -75,7 +75,8 @@
 (defn- vec-removals [state diff]
   (if-not (seq diff)
     state
-    (let [max-index (- (count state) (first diff))]
+    (let [removed-count (as-> (first diff) x (if (integer? x) x (count state)))
+          max-index (- (count state) removed-count)]
       (loop [index 0
              [old-val & old-rest :as old-coll] state
              [diff-index diff-val & diff-rest :as diff-coll] (rest diff)

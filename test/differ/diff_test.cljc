@@ -83,7 +83,8 @@
       (is (= [1 [:+ 5]] (diff/alterations [1 []] [1 [5]])))
       (is (= [2 {:a 5}] (diff/alterations [1 2 {:a 4, :b 10}]
                                           [1 2 {:a 5, :b 10}])))
-      (is (= [] (diff/alterations [5 [1 2]] [5 [1 2]]))))
+      (is (= [] (diff/alterations [5 [1 2]] [5 [1 2]])))
+      (is (= [1 #{3}] (diff/alterations [5 #{1 2}] [5 #{3}]))))
 
     (testing "values can be added"
       (is (= [:+ 1] (diff/alterations [] [1])))
@@ -152,7 +153,8 @@
 
     (testing "works with nesting"
       (is (= [1 1 [1]] (diff/removals [1 [3 4 5] 6] [1 [3 5]])))
-      (is (= [0 1 {:a 0}] (diff/removals [1 {:a 2} 3] [1 {} 3])))))
+      (is (= [0 1 {:a 0}] (diff/removals [1 {:a 2} 3] [1 {} 3])))
+      (is (= [0 1 #{0}] (diff/removals [1 #{0} 3] [1 #{} 3])))))
 
   (deftest list-removals
     (testing "removals"
