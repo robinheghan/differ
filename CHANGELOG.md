@@ -1,6 +1,7 @@
 # Changelog
 
 - Add generative tests
+- Fix issue where falsey map keys were not handled correctly by diff or patch.
 
 ## 0.3.3
 

@@ -11,20 +11,21 @@
 
 
 (defn- map-alterations [state new-state]
-  (loop [[k & ks] (keys new-state)
+  (loop [[e & es] (seq new-state)
          diff (transient {})]
-    (if-not k
+    (if-not e
       (persistent! diff)
-      (let [old-val (get state k ::none)
+      (let [k (key e)
+            old-val (get state k ::none)
             new-val (alterations old-val (get new-state k))]
         (cond (and (coll? old-val) (coll? new-val) (empty? new-val))
-              (recur ks diff)
+              (recur es diff)
 
               (= old-val new-val)
-              (recur ks diff)
+              (recur es diff)
 
               :else
-              (recur ks (assoc! diff k new-val)))))))
+              (recur es (assoc! diff k new-val)))))))
 
 (defn- vec-alterations [state new-state]
   (loop [idx 0
@@ -65,18 +66,19 @@
 
 (defn- map-removals [state new-state]
   (let [new-keys (set (keys new-state))]
-    (loop [[k & ks] (keys state)
+    (loop [[e & es] (seq state)
            diff (transient {})]
-      (if-not k
+      (if-not (some? e)
         (persistent! diff)
-        (if-not (contains? new-keys k)
-          (recur ks (assoc! diff k 0))
+        (let [k (key e)]
+         (if-not (contains? new-keys k)
+          (recur es (assoc! diff k 0))
           (let [old-val (get state k)
                 new-val (get new-state k)
                 rms (removals old-val new-val)]
             (if (and (coll? rms) (seq rms))
-              (recur ks (assoc! diff k rms))
-              (recur ks diff))))))))
+              (recur es (assoc! diff k rms))
+              (recur es diff)))))))))
 
 (defn- vec-removals [state new-state]
   (let [diff (- (count state) (count new-state))

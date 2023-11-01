@@ -10,13 +10,14 @@
 
 
 (defn- map-alterations [state diff]
-  (loop [[k & ks] (keys diff)
+  (loop [[e & es] (seq diff)
          result (transient state)]
-    (if-not k
+    (if-not e
       (with-meta (persistent! result) (meta state))
-      (let [old-val (get result k)
+      (let [k (key e)
+            old-val (get result k)
             diff-val (get diff k)]
-        (recur ks (assoc! result k (alterations old-val diff-val)))))))
+        (recur es (assoc! result k (alterations old-val diff-val)))))))
 
 (defn- vec-alterations [state diff]
   (loop [idx 0
@@ -60,15 +61,16 @@
 
 
 (defn- map-removals [state diff]
-  (loop [[k & ks] (keys diff)
+  (loop [[e & es] (seq diff)
          result (transient state)]
-    (if-not k
+    (if-not e
       (with-meta (persistent! result) (meta state))
-      (let [old-val (get result k)
+      (let [k (key e)
+            old-val (get result k)
             diff-val (get diff k)]
         (if (= 0 diff-val)
-          (recur ks (dissoc! result k))
-          (recur ks (assoc! result k (removals old-val diff-val))))))))
+          (recur es (dissoc! result k))
+          (recur es (assoc! result k (removals old-val diff-val))))))))
 
 (defn- vec-removals [state diff]
   (if-not (seq diff)
