@@ -1,4 +1,4 @@
-(defproject differ "0.3.3"
+(defproject differ "0.4.0"
   :description "A library for diffing, and patching, Clojure(script) data structures"
   :url "https://github.com/Skinney/differ"
   :license {:name "MIT"

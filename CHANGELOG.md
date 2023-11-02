@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.4.0
+
 - Update dependencies and build targets
 - Add generative tests
 - Add deps.edn support (via git coordinate)
