@@ -42,6 +42,8 @@
     (testing "alterations"
       (is (= {false 0} (diff/alterations state (assoc state false 0))))
       (is (= {:one 2} (diff/alterations state (assoc state :one 2))))
+      (is (= {:vector {}} (diff/alterations state (assoc state :vector {}))))
+      (is (= {:set []} (diff/alterations state (assoc state :set []))))
       (is (= {:one 2, :seven 5} (diff/alterations state (assoc state :seven 5, :one 2)))))
 
     (testing "works with nesting"

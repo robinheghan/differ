@@ -2,6 +2,7 @@
 
 - Add generative tests
 - Fix issue where falsey map keys were not handled correctly by diff or patch.
+- Fix issue #3 where patch throws instead of replacing a vector with an number.
 
 ## 0.3.3
 

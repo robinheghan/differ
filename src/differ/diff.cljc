@@ -18,7 +18,9 @@
       (let [k (key e)
             old-val (get state k ::none)
             new-val (alterations old-val (get new-state k))]
-        (cond (and (coll? old-val) (coll? new-val) (empty? new-val))
+        (cond (and (coll? old-val) (coll? new-val) (empty? new-val)
+                   (= (sequential? old-val) (sequential? new-val))
+                   (= (set? old-val) (set? new-val)))
               (recur es diff)
 
               (= old-val new-val)
