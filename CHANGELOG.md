@@ -1,5 +1,7 @@
 # Changelog
 
+- Add generative tests
+
 ## 0.3.3
 
 - Update dependencies and build targets

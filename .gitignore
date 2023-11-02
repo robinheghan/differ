@@ -12,3 +12,6 @@ pom.xml.asc
 .lein-plugins
 .lein-repl-history
 .nrepl-port
+.calva
+.clj-kondo
+.lsp
