@@ -19,6 +19,7 @@
             old-val (get state k ::none)
             new-val (alterations old-val (get new-state k))]
         (cond (and (coll? old-val) (coll? new-val) (empty? new-val)
+                   (not (record? old-val)) (not (record? new-val))
                    (= (sequential? old-val) (sequential? new-val))
                    (= (set? old-val) (set? new-val)))
               (recur es diff)
@@ -51,7 +52,10 @@
   The datastructure returned will be of the same type as the first argument
   passed. Works recursively on nested datastructures."
   [state new-state]
-  (cond (and (map? state) (map? new-state))
+  (cond (or (record? state) (record? new-state))
+        new-state
+
+        (and (map? state) (map? new-state))
         (map-alterations state new-state)
 
         (and (sequential? state) (sequential? new-state))
@@ -123,5 +127,11 @@
         (and (set? state) (set? new-state))
         (set/difference state new-state)
 
+        (record? state)
+        state
+
+        (coll? state)
+        (empty state)
+
         :else
-        (empty state)))
+        state))

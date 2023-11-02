@@ -6,6 +6,7 @@
             #?(:clj [clojure.test :refer [is deftest testing]]
                :cljs [cljs.test :refer-macros [is deftest testing]])))
 
+(defrecord TestRecord [x])
 
 (let [state {:one 1
              :two {:three 2
@@ -132,6 +133,7 @@
 
     (testing "return state when values are not collections"
       (is (= 1 (diff/removals 1 2)))
+      (is (= (->TestRecord 0) (diff/removals (->TestRecord 0) [:b])))
       (is (= true (diff/removals true false)))))
 
   (deftest map-removals

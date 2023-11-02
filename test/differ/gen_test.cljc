@@ -1,5 +1,6 @@
 (ns differ.gen-test
   (:require [differ.core :as core]
+            [differ.patch :as patch]
             clojure.pprint
             [clojure.test :refer [deftest is testing]]
             [clojure.test.check.clojure-test :refer [defspec]]
@@ -9,6 +10,8 @@
 (def ^:private
   key-gen
   (gen/elements [0 1 :a :b "c" "d" true false nil]))
+
+(defrecord TestRecord [x])
 
 (def ^:private
   simple-type-printable-equatable
@@ -20,6 +23,7 @@
     gen/ratio gen/boolean gen/keyword gen/keyword-ns gen/symbol gen/symbol-ns gen/uuid
     (gen/double* {:NaN? false, :infinite? false, :min 0.00000001, :max 9007199254740991})
     (gen/double* {:NaN? false, :infinite? false, :max -0.00000001, :min -9007199254740991})
+    (gen/fmap ->TestRecord gen/small-integer)
     gen/char-ascii
     gen/string-ascii]))
 
@@ -54,7 +58,9 @@
            [(list (list (list 1N)))
             (list (list (list ) #{} (list false 0.4788818359375)) [true] #{#{:+?/N92a}} \" "D" #{:Bb. -41627433298775N false} {})]
            [(list 0 0 0 0 0 0 0 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 [1 1 2]])
-            (list 0 0 0 0 0 0 0 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 []])]]]
+            (list 0 0 0 0 0 0 0 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 []])]
+           [(list [#differ.gen_test.TestRecord{:x 0}]) (list [0])]
+           [{0 #differ.gen_test.TestRecord{:x 0}} {0 {}}]]]
     (testing (pr-str 'round-trip old '-> new)
       (is (= new (core/patch old (core/diff old new)))
           (pr-str 'round-trip 'failed 'given 'diff (core/diff old new))))))
@@ -62,12 +68,15 @@
 (defn- describe
   [old new]
   (let [diff (delay (core/diff old new))
+        intermediate (delay (patch/removals old @diff))
         patched (delay (core/patch old @diff))
         success? (delay (= new @patched))]
     (println "----- original (old) -----")
     (clojure.pprint/pprint old)
     (println "----- diff [alterations removals]  -----")
     (clojure.pprint/pprint @diff)
+    (println "----- intermedia (removals applied)  -----")
+    (clojure.pprint/pprint @intermediate)
     (println "----- expected (new) -----")
     (clojure.pprint/pprint new)
     (println "----- patched -----")
@@ -94,4 +103,7 @@
   (bi-describe (list (list (list 1N))) (list (list (list ) #{} (list false 0.4788818359375)) [true] #{#{:+?/N92a}} \" "D" #{:Bb. -41627433298775N false} {}))
   (bi-describe (list 0 0 0 0 0 0 0 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 [1 1 2]])
                (list 0 0 0 0 0 0 0 0 [0 0 0 0 0 0 0 0 0 0 0 0 0 []]))
+  (bi-describe (list [#differ.gen_test.TestRecord{:x 0}]) (list [0]))
+  (bi-describe (list 0 [#differ.gen_test.TestRecord{:x 0}]) (list 0 [#differ.gen_test.TestRecord{:x -1}]))
+  (bi-describe {0 #differ.gen_test.TestRecord{:x 0}} {0 {}})
   :-)

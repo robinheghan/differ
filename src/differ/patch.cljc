@@ -41,7 +41,10 @@
 (defn alterations
   "Returns a new datastructure, containing the changes in the provided diff."
   [state diff]
-  (cond (and (map? state) (map? diff))
+  (cond (or (record? state) (record? diff))
+        diff
+
+        (and (map? state) (map? diff))
         (map-alterations state diff)
 
         (and (sequential? state) (sequential? diff))
@@ -94,7 +97,10 @@
   "Returns a new datastructure, not containing the elements in the
   provided diff."
   [state diff]
-  (cond (and (map? state) (map? diff))
+  (cond (record? state)
+        state
+
+        (and (map? state) (map? diff))
         (map-removals state diff)
 
         (and (sequential? state) (sequential? diff))
