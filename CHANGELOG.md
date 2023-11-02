@@ -1,6 +1,7 @@
 # Changelog
 
 - Add generative tests
+- Add deps.edn support (via git coordinate)
 - Fix issue where falsey map keys were not handled correctly by diff or patch.
 - Fix issue where collections could not be cleared.
 - Fix issue #3 where patch throws instead of replacing a vector with an number.
