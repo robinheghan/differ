@@ -10,10 +10,10 @@
 
   :profiles {:1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}
              :1.9 {:dependencies [[org.clojure/clojure "1.9.0"]]}
-             :1.10 {:dependencies [[org.clojure/clojure "1.10.1"]]}
+             :1.10 {:dependencies [[org.clojure/clojure "1.10.3"]]}
              :1.11 {:dependencies [[org.clojure/clojure "1.11.1"]]}
-             :cljs {:dependencies [[org.clojure/clojurescript "1.10.520"]]
-                    :plugins [[lein-cljsbuild "1.1.2"]]
+             :cljs {:dependencies [[org.clojure/clojurescript "1.11.60"]]
+                    :plugins [[lein-cljsbuild "1.1.8"]]
                     :cljsbuild {:test-commands {"phantom" ["phantomjs" :runner "target/testable.js"]}
                                 :builds [{:source-paths ["src" "test"]
                                           :compiler {:output-to "target/testable.js"

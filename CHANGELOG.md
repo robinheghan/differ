@@ -1,5 +1,6 @@
 # Changelog
 
+- Update dependencies and build targets
 - Add generative tests
 - Add deps.edn support (via git coordinate)
 - Fix issue where falsey map keys were not handled correctly by diff or patch.
