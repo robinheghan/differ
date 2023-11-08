@@ -12,6 +12,12 @@ Add the following the to your `project.clj`:
 
 [![Clojars Project](http://clojars.org/differ/latest-version.svg)](http://clojars.org/differ)
 
+Or git coordinates in deps.edn:
+
+```clojure
+  :deps {io.github.robinheghan/differ {:git/tag "THE_TAG" :git/sha "THE_SHA"}}
+```
+
 ## Usage
 
 First of all, you need to require the proper namespace:
