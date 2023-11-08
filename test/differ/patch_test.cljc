@@ -26,6 +26,8 @@
     (testing "maps"
       (is (= (assoc state :one 2)
              (patch/alterations state {:one 2})))
+      (is (= (assoc state false 2)
+             (patch/alterations state {false 2})))
       (is (= (-> state
                  (assoc :seven 7)
                  (assoc-in [:two :three] {:booya "boom"}))

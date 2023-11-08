@@ -10,13 +10,14 @@
 
 
 (defn- map-alterations [state diff]
-  (loop [[k & ks] (keys diff)
+  (loop [[e & es] (seq diff)
          result (transient state)]
-    (if-not k
+    (if-not e
       (with-meta (persistent! result) (meta state))
-      (let [old-val (get result k)
+      (let [k (key e)
+            old-val (get result k)
             diff-val (get diff k)]
-        (recur ks (assoc! result k (alterations old-val diff-val)))))))
+        (recur es (assoc! result k (alterations old-val diff-val)))))))
 
 (defn- vec-alterations [state diff]
   (loop [idx 0
@@ -40,7 +41,10 @@
 (defn alterations
   "Returns a new datastructure, containing the changes in the provided diff."
   [state diff]
-  (cond (and (map? state) (map? diff))
+  (cond (or (record? state) (record? diff))
+        diff
+
+        (and (map? state) (map? diff))
         (map-alterations state diff)
 
         (and (sequential? state) (sequential? diff))
@@ -60,20 +64,22 @@
 
 
 (defn- map-removals [state diff]
-  (loop [[k & ks] (keys diff)
+  (loop [[e & es] (seq diff)
          result (transient state)]
-    (if-not k
+    (if-not e
       (with-meta (persistent! result) (meta state))
-      (let [old-val (get result k)
+      (let [k (key e)
+            old-val (get result k)
             diff-val (get diff k)]
         (if (= 0 diff-val)
-          (recur ks (dissoc! result k))
-          (recur ks (assoc! result k (removals old-val diff-val))))))))
+          (recur es (dissoc! result k))
+          (recur es (assoc! result k (removals old-val diff-val))))))))
 
 (defn- vec-removals [state diff]
   (if-not (seq diff)
     state
-    (let [max-index (- (count state) (first diff))]
+    (let [removed-count (as-> (first diff) x (if (integer? x) x (count state)))
+          max-index (- (count state) removed-count)]
       (loop [index 0
              [old-val & old-rest :as old-coll] state
              [diff-index diff-val & diff-rest :as diff-coll] (rest diff)
@@ -91,7 +97,10 @@
   "Returns a new datastructure, not containing the elements in the
   provided diff."
   [state diff]
-  (cond (and (map? state) (map? diff))
+  (cond (record? state)
+        state
+
+        (and (map? state) (map? diff))
         (map-removals state diff)
 
         (and (sequential? state) (sequential? diff))

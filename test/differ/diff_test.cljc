@@ -6,6 +6,7 @@
             #?(:clj [clojure.test :refer [is deftest testing]]
                :cljs [cljs.test :refer-macros [is deftest testing]])))
 
+(defrecord TestRecord [x])
 
 (let [state {:one 1
              :two {:three 2
@@ -40,7 +41,10 @@
 
   (deftest map-alterations
     (testing "alterations"
+      (is (= {false 0} (diff/alterations state (assoc state false 0))))
       (is (= {:one 2} (diff/alterations state (assoc state :one 2))))
+      (is (= {:vector {}} (diff/alterations state (assoc state :vector {}))))
+      (is (= {:set []} (diff/alterations state (assoc state :set []))))
       (is (= {:one 2, :seven 5} (diff/alterations state (assoc state :seven 5, :one 2)))))
 
     (testing "works with nesting"
@@ -80,7 +84,8 @@
       (is (= [1 [:+ 5]] (diff/alterations [1 []] [1 [5]])))
       (is (= [2 {:a 5}] (diff/alterations [1 2 {:a 4, :b 10}]
                                           [1 2 {:a 5, :b 10}])))
-      (is (= [] (diff/alterations [5 [1 2]] [5 [1 2]]))))
+      (is (= [] (diff/alterations [5 [1 2]] [5 [1 2]])))
+      (is (= [1 #{3}] (diff/alterations [5 #{1 2}] [5 #{3}]))))
 
     (testing "values can be added"
       (is (= [:+ 1] (diff/alterations [] [1])))
@@ -128,6 +133,7 @@
 
     (testing "return state when values are not collections"
       (is (= 1 (diff/removals 1 2)))
+      (is (= (->TestRecord 0) (diff/removals (->TestRecord 0) [:b])))
       (is (= true (diff/removals true false)))))
 
   (deftest map-removals
@@ -149,7 +155,8 @@
 
     (testing "works with nesting"
       (is (= [1 1 [1]] (diff/removals [1 [3 4 5] 6] [1 [3 5]])))
-      (is (= [0 1 {:a 0}] (diff/removals [1 {:a 2} 3] [1 {} 3])))))
+      (is (= [0 1 {:a 0}] (diff/removals [1 {:a 2} 3] [1 {} 3])))
+      (is (= [0 1 #{0}] (diff/removals [1 #{0} 3] [1 #{} 3])))))
 
   (deftest list-removals
     (testing "removals"
